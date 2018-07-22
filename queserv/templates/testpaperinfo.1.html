@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+
+    <script type="text/x-mathjax-config">
+        MathJax.Hub.Config({ extensions: ["tex2jax.js"], jax: ["input/TeX","output/HTML-CSS"], tex2jax: {inlineMath: [["$","$"],["\\(","\\)"]]}
+        });
+    </script>
+    <script type="text/javascript" src="https://cdn.bootcss.com/mathjax/2.7.2/latest.js"></script>
+
+    <link rel="stylesheet" href="//cdn.bootcss.com/uikit/2.25.0/css/uikit.almost-flat.min.css">
+    <link rel="stylesheet" href="//cdn.bootcss.com/uikit/2.25.0/css/components/sticky.almost-flat.min.css">
+    <script src="https://cdn.bootcss.com/jquery/3.2.1/jquery.min.js"></script>
+    <script src="//cdn.bootcss.com/uikit/2.25.0/js/uikit.min.js"></script>
+    <script src="//cdn.bootcss.com/uikit/2.25.0/js/components/sticky.min.js"></script>
+
+    <script src="/scripts/list.js"></script>
+    <script src="/scripts/cont.js"></script>
+    <script type="text/javascript">
+        var cont = new Cont();
+        $(document).ready(function () {
+            var qtypes = document.getElementsByClassName("qtype");
+            for (var i = 0; i < qtypes.length; i++) {
+                cont.appendQtype(qtypes[i].textContent.trim());
+            }
+            cont.initkvs();
+
+            var emptyDiv = function (node) {
+                if (typeof node == "string") {
+                    node = document.getElementById(node);
+                }
+                console.log(node);
+
+                if (!node) return;
+                while (node.hasChildNodes()) {
+                    node.removeChild(node.firstChild);
+                }
+            };
+
+            $(".qtype").click(function () {
+                cont.setCurrentQtype($(this).children("a").text());
+                emptyDiv("questionDescribe");
+            });
+
+            $(".number").click(function () {
+                var number = $(this).parent().index() + 1;
+                console.log(number);
+                cont.addQuestion(number);
+            });
+
+            $("#switchToTestInfo").click(function () {
+                var addAQtype = function (qType, qS) {
+                    var label = document.createElement("label");
+                    label.textContent = "共计" + qS.length + "题";
+                    label.className = "uk-width-1-6";
+                    label.for = qtype + "s";
+                    divQuestDescribe.appendChild(label);
+
+                    var input = document.createElement("input");
+                    input.id = qtype + "s";
+                    input.type = "text";
+                    input.className = "uk-width-5-6";
+                    for (let i = 0; i < qS.length; i++) {
+                        input.value += qS[i] + ",";
+                    }
+                    divQuestDescribe.appendChild(input);
+
+                    var describeLabel = document.createElement("label");
+                    describeLabel.textContent = "题头描述";
+                    describeLabel.className = "uk-width-1-6";
+                    divQuestDescribe.appendChild(describeLabel);
+
+                    var describe = document.createElement("input");
+                    describe.type = "text";
+                    describe.className = "uk-width-5-6"
+                    divQuestDescribe.appendChild(describe);
+
+                    //divQuestDescribe.appendChild(document.createElement("br"));
+                }
+
+                console.log("#swith question info");
+                var divQuestDescribe = document.getElementById("questionDescribe");
+                var qtypes = cont.getQtypes();
+                for (var i = 0; i < qtypes.length; i++) {
+                    var qtype = qtypes[i];
+                    var qs = cont.getQuestions(qtype);
+                    if (!qs.length) continue;
+                    (function (x, y) {
+                        addAQtype(x, y);
+                    })(qtype, qs);
+                }
+            });
+
+            $("#printCont").click(function () {
+                var qtypes = cont.getQtypes();
+                for (var i = 0; i < qtypes.length; i++) {
+                    console.log(cont.getQuestions(qtypes[i]));
+                }
+            });
+
+        });
+    </script>
+</head>
+
+<body>
+    <div class="uk-container uk-container-center uk-margin-top">
+        <h1 class="uk-center">试卷录入系统</h1>
+        <!-- 位于左边的选项卡式导航 -->
+        <div class="uk-grid">
+            <div class="uk-width-1-5">
+                <!-- 包含拨动元素的垂直选项卡式导航 -->
+                <ol class="uk-tab uk-tab-left" data-uk-tab="{connect:'#my-id'}">
+                    <li>
+                        <a>说明</a>
+                    </li>
+                    {{range $k, $v := .Questions}}
+                    <!-- <li class="qtype" onclick="console.log($(this).children('a').text());"> -->
+                    <li class="qtype">
+                        <a href="">{{$k}}</a>
+                    </li>
+                    {{end}}
+                    <li id="switchToTestInfo">
+                        <a href="">试卷信息</a>
+                    </li>
+                </ol>
+            </div>
+            <div class="uk-width-4-5">
+                <!-- 包含内容项目的容器 -->
+                <ol id="my-id" class="uk-switcher">
+                    <li>
+                        <p>本软件由福建工程学院 John Bai开发。</p>
+                        <p>请根据右侧菜单，依次进入填空题、选择题等题型库中选择试题。</p>
+                        <p>最后进入试卷信息页面，查看并补充填写试卷信息，然后点击提交按钮。</p>
+                        <p>由于后台数据量较大，可能需要排队等待。试卷生成后，会将试卷发送到你的邮箱，请注意查收。</p>
+                    </li>
+                    {{range $k, $v := .Questions}}
+                    <li>
+                        <ol id={{$k}} class="uk-list uk-list-striped uk-list-space">
+                            {{range $v}}
+                            <li>
+                                <input type="checkbox" class="number"> {{.}}
+                            </li>
+                            {{end}}
+                        </ol>
+                    </li>
+                    {{end}}
+                    <li>
+                        <table class="uk-table" id="testInfoTable">
+                            <caption>试卷信息录入</caption>
+                            <tbody>
+                                <tr>
+                                    <td class="uk-width-1-8 uk-text-right">试卷文件名：</td>
+                                    <td class="uk-width-3-8">
+                                        <input id="paperFileName" type="text" class="uk-width-1-1">
+                                    </td>
+                                    <td class="uk-width-1-8 uk-text-right">课程名称：</td>
+                                    <td class="uk-width-3-8">
+                                        <input id="courseName" type="text" class="uk-width-1-1">
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="uk-width-1-8 uk-text-right">任课教师：</td>
+                                    <td class="uk-width-3-8">
+                                        <input id="courseTeacher" type="text" class="uk-width-1-1">
+                                    </td>
+                                    <td class="uk-width-1-8 uk-text-right">出卷教师：</td>
+                                    <td class="uk-width-3-8">
+                                        <input id="paperTeacher" type="text" class="uk-width-1-1">
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="uk-width-1-8 uk-text-right">学年学期：</td>
+                                    <td class="uk-width-3-8">
+                                        <input id="yearAndTerm" type="text" class="uk-width-1-1">
+                                    </td>
+                                    <td class="uk-width-1-8 uk-text-right">班级名称：</td>
+                                    <td class="uk-width-3-8">
+                                        <input id="className" type="text" class="uk-width-1-1">
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="uk-width-1-8 uk-text-right">ABC卷：</td>
+                                    <td class="uk-width-3-8">
+                                        <input id="abcSelected" type="text" class="uk-width-1-1">
+                                    </td>
+                                    <td class="uk-width-1-8 uk-text-right">班级名称：</td>
+                                    <td class="uk-width-3-8">
+                                        <input id="openOrCloseTest" type="text" class="uk-width-1-1">
+                                    </td>
+                                </tr>
+                                {{range $k, $v := .Questions}}
+                                <tr>
+                                    <td class="uk-width-1-8 uk-text-right">{{$k}}：</td>
+                                    <td class="uk-width-3-8">
+                                        <input id="{{$k}}id" type="text" class="uk-width-1-1">
+                                    </td>
+                                    <td class="uk-width-1-8 uk-text-right">{{$k}}题头：</td>
+                                    <td class="uk-width-3-8">
+                                        <input id="{{$k}}Note" type="text" class="uk-width-1-1">
+                                    </td>
+                                </tr>
+                                {{end}}
+                                <tr>
+                                    <td colspan="4"><input type="submit" class="uk-width-1-1"></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </li>
+                </ol>
+            </div>
+        </div>
+</body>
+
+</html>

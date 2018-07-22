@@ -1,0 +1,8 @@
+{
+    "DataBaseItems":[
+        {"Name":"conc", "Title":"混凝土结构设计原理", "Path":"./config/BasicConc.db"},
+        {"Name":"concdesign", "Title":"混凝土结构设计", "Path":"./config/ConcDesign.db"},
+        {"Name":"conckancha", "Title":"混凝土结构基本原理", "Path":"./config/BasicConcForKancha.db"},
+        {"Name":"concprimarydesign", "Title":"混凝土结构基本原理与设计", "Path":"./config/conc.db"}
+    ]
+}

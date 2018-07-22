@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <style>
+        .inlinelabel {
+            width: 100px;
+            display: inline-block;
+            text-align: right;
+        }
+    </style>
+
+    <script type="text/x-mathjax-config">
+        MathJax.Hub.Config({ extensions: ["tex2jax.js"], jax: ["input/TeX","output/HTML-CSS"], tex2jax: {inlineMath: [["$","$"],["\\(","\\)"]]}
+        });
+    </script>
+    <script type="text/javascript" src="https://cdn.bootcss.com/mathjax/2.7.2/latest.js"></script>
+
+    <link rel="stylesheet" href="//cdn.bootcss.com/uikit/2.25.0/css/uikit.almost-flat.min.css">
+    <link rel="stylesheet" href="//cdn.bootcss.com/uikit/2.25.0/css/components/sticky.almost-flat.min.css">
+    <script src="https://cdn.bootcss.com/jquery/3.2.1/jquery.min.js"></script>
+    <script src="//cdn.bootcss.com/uikit/2.25.0/js/uikit.min.js"></script>
+    <script src="//cdn.bootcss.com/uikit/2.25.0/js/components/sticky.min.js"></script>
+
+    <script src="/scripts/list.js"></script>
+    <script src="/scripts/cont.js"></script>
+    <script type="text/javascript">
+        var cont = new Cont();
+        $(document).ready(function () {
+            var qtypes = document.getElementsByClassName("qtype");
+            for (var i = 0; i < qtypes.length; i++) {
+                cont.appendQtype(qtypes[i].textContent.trim());
+            }
+            cont.initkvs();
+
+            var emptyDiv = function (node) {
+                if (typeof node == "string") {
+                    node = document.getElementById(node);
+                }
+                console.log(node);
+
+                if (!node) return;
+                while (node.hasChildNodes()) {
+                    node.removeChild(node.firstChild);
+                }
+            };
+
+            $(".qtype").click(function () {
+                cont.setCurrentQtype($(this).children("a").text());
+                // emptyDiv("questionDescribe");
+            });
+
+            $(".number").click(function () {
+                var number = $(this).parent().index() + 1;
+                console.log(number);
+                cont.addQuestion(number);
+            });
+
+            $("#switchToTestInfo").click(function () {
+                var addAQtype = function (qType, qS) {
+                    var label = document.createTextNode(qType + "共计 " + qS.length + "题:");
+                    divQuestDescribe.appendChild(label);
+
+                    var input = document.createElement("input");
+                    input.name = qtype + "s";
+                    input.type = "text";
+                    for (let i = 0; i < qS.length; i++) {
+                        input.value += qS[i] + ",";
+                    }
+                    divQuestDescribe.appendChild(input);
+
+                    var describeLabel = document.createTextNode("该题题头描述：");
+                    divQuestDescribe.appendChild(describeLabel);
+
+                    var describe = document.createElement("input");
+                    describe.type = "text";
+                    divQuestDescribe.appendChild(describe);
+
+                    divQuestDescribe.appendChild(document.createElement("br"));
+                }
+
+                console.log("#swith question info");
+                var divQuestDescribe = document.getElementById("questionDescribe");
+                var qtypes = cont.getQtypes();
+                for (var i = 0; i < qtypes.length; i++) {
+                    var qtype = qtypes[i];
+                    var qs = cont.getQuestions(qtype);
+                    if (!qs.length) continue;
+                    var eleQs = document.getElementsByName(qtype+"Name")[0];
+                    eleQs.value = "";
+                    for (var j = 0; j < qs.length; j++) {
+                        eleQs.value += qs[j] + ",";
+                    }
+                    // (function (x, y) {
+                    //     addAQtype(x, y);
+                    // })(qtype, qs);
+                }
+            });
+
+            $("#printCont").click(function () {
+                var qtypes = cont.getQtypes();
+                for (var i = 0; i < qtypes.length; i++) {
+                    console.log(cont.getQuestions(qtypes[i]));
+                }
+            });
+
+        });
+    </script>
+</head>
+
+<body>
+    <div class="uk-container uk-container-center uk-margin-top">
+        <h1 class="uk-center">试卷录入系统</h1>
+        <!-- 位于左边的选项卡式导航 -->
+        <div class="uk-grid">
+            <div class="uk-width-1-5">
+                <!-- 包含拨动元素的垂直选项卡式导航 -->
+                <ol class="uk-tab uk-tab-left" data-uk-tab="{connect:'#my-id'}">
+                    <li>
+                        <a>说明</a>
+                    </li>
+                    {{range $k, $v := .Questions}}
+                    <!-- <li class="qtype" onclick="console.log($(this).children('a').text());"> -->
+                    <li class="qtype">
+                        <a href="">{{$k}}</a>
+                    </li>
+                    {{end}}
+                    <li id="switchToTestInfo">
+                        <a href="">试卷信息</a>
+                    </li>
+                </ol>
+            </div>
+            <div class="uk-width-4-5">
+                <!-- 包含内容项目的容器 -->
+                <ol id="my-id" class="uk-switcher">
+                    <li>
+                        <p>本软件由福建工程学院 John Bai开发。</p>
+                        <p>请根据右侧菜单，依次进入填空题、选择题等题型库中选择试题。</p>
+                        <p>最后进入试卷信息页面，查看并补充填写试卷信息，然后点击提交按钮。</p>
+                        <p>由于后台数据量较大，可能需要排队等待。试卷生成后，会将试卷发送到你的邮箱，请注意查收。</p>
+                    </li>
+                    {{range $k, $v := .Questions}}
+                    <li>
+                        <ol id={{$k}} class="uk-list uk-list-striped uk-list-space">
+                            {{range $v}}
+                            <li>
+                                <input type="checkbox" class="number"> {{.}}
+                            </li>
+                            {{end}}
+                        </ol>
+                    </li>
+                    {{end}}
+                    <li>
+                        <form id="testInfoForm" action="#" method="post" autocomplete="on">
+                            <h3>试卷信息</h3>
+                            <label for="paperFileName" class="inlinelabel">试卷文件名称: </label>
+                            <input type="text" name="paperFileName" class="inlineinput" value="conc.tex"/>
+                            <label for="courseName" class="inlinelabel">课程名称：</label>
+                            <input type="text" name="courseName" value="混凝土结构设计原理"/>
+                            <br />
+
+                            <label for="teacherForCourse" class="inlinelabel">任课教师：</label>
+                            <input type="text" name="teacherForCourse" value="白凤军"/>
+                            <label for="teacherForTest" class="inlinelabel">出卷教师：</label>
+                            <input type="text" name="teacherForTest" value="白凤军"/>
+                            <br />
+
+                            <label for="yearAndTerm" class="inlinelabel">学年学期：</label>
+                            <input type="text" name="yearAndTerm" value="2017-2018-1"/> 
+                            <label for="className" class="inlinelabel">班级名称：</label>
+                            <input type="text" name="className" value="勘查1501"/>
+                            <br />
+
+                            <label for="openOrCloseTest" class="inlinelabel">开卷闭卷：</label>
+                            <input type="text" name="openOrCloseTest" value="闭卷"/>
+                            <label for="abcSelected" class="inlinelabel">A/B/C卷 ：</label>
+                            <input type="text" name="abcSelected" value="A"/>
+                            <br />
+
+                            <h3>试题信息</h3>
+                            {{range $k, $v := .Questions}}
+                            <label for="{{$k}}Note" class="inlinelabel">{{$k}}描述：</label>
+                            <input type="text" name="{{$k}}Note">
+                            <label for="{{$k}}Name" class="inlinelabel">已选试题：</label>
+                            <input type="text" name="{{$k}}Name">
+                            <br> {{end}}
+
+                            <h3>确认上述信息无误，点击提交</h3>
+                            <input type="submit" />
+                        </form>
+                    </li>
+                </ol>
+            </div>
+        </div>
+	<script>
+	var theX = new Map();
+	theX.set("填空题Note", "填空题（20分，每空1分）");
+	theX.set("选择题Note", "选择题（20分，每题2分）");
+	theX.set("计算题Note",  "计算题（40分，每题10分）");
+	theX.set("问答题Note", "问答题（20分，每题10分）");
+	for(var key of theX.keys()) {
+		var ele = document.getElementsByName(key)[0];
+		if (!ele) continue;
+		ele.value = theX.get(key);
+	}
+	</script>
+</body>
+
+</html>

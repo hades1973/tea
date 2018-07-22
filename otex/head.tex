@@ -1,0 +1,54 @@
+\documentclass[12pt]{article}
+\usepackage{ctex}
+\usepackage{lastpage}
+\usepackage{color}
+\usepackage{placeins}
+\usepackage{ulem}
+\usepackage{titlesec}
+\usepackage{graphicx}
+\usepackage{colortbl}
+\usepackage{listings}
+\usepackage{amsmath}%
+\usepackage{MnSymbol}%
+\usepackage{wasysym}%
+\usepackage{amssymb}
+\usepackage{indentfirst}
+\usepackage{fancyhdr}
+\usepackage{tikz}
+%%\usepackage[a4paper,hmargin={5cm,2cm},vmargin={2cm, 2cm},landscape]{geometry}
+\usepackage{wallpaper}
+
+%%\columnsep=2cm
+%%\marginparsep=3.5cm
+
+\newcommand{\blank}{\uline{\rule{3cm}{0pt}}}
+
+\renewcommand{\headrulewidth}{0pt}
+\pagestyle{fancy}
+
+\fancyhf{}
+\fancyfoot[CO,CE]{\vspace*{1mm}第\,\thepage\,页 , 共 ~\pageref{LastPage} 页}
+
+\providecommand{\CJKnumber}[1]{
+    \ifcase#1\or{一}\or{二}\or{三}\or{四}\or{五}\or{六}\or{七}\or{八}\or{九}\or{十}
+    \fi
+}
+
+\newcounter{Problem}
+\renewcommand{\theProblem} {
+    \CJKnumber{\arabic{Problem}}
+}
+
+\newcommand{\Problem}[1] {
+     \par{\vspace{1em}}
+     \noindent \refstepcounter{Problem} \textbf{\large \theProblem \hspace{0.35em} #1} 
+     \par{\vspace{1em}}
+}
+
+\renewcommand{\labelenumii}{\arabic{enumi}.\arabic{enumii}}
+
+\begin{document}
+
+%s
+
+\end{document}
