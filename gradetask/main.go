@@ -121,7 +121,10 @@ func main() {
 		Plan: Plan,
 	}
 	for i := range names {
-		f, _ := os.Create("out/" + names[i] + ".tex")
+		f, err := os.Create("out/" + names[i] + ".tex")
+		if err != nil {
+			log.Fatalln(err)
+		}
 		data.X["Name"] = names[i]
 		data.X["Class"] = class[i]
 		data.X["Projection"] = prjs[i]
