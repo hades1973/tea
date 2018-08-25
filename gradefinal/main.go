@@ -50,6 +50,9 @@ type Info struct {
 	StudentName            string
 	StudentNumber          string
 	DesignName             string
+	BaoGaoJiangJie         string
+	DaBianQingKuang        string
+	ChuangXin              string
 	DaBianChengJi          string
 	ZhiDaoChengJi          string
 	PingYueChengJi         string
@@ -75,17 +78,28 @@ func main() {
 		log.Fatalln(fmt.Errorf("Sheets[0] is nil"))
 	}
 	infos := make([]*Info, 0)
-	for i := 1; i < len(sheet.Rows); i++ {
+	for i := 3; i < len(sheet.Rows); i++ {
 		info := Info{}
 		info.StudentName = sheet.Cell(i, A).String()
 		info.StudentNumber = sheet.Cell(i, B).String()
 		info.Class = sheet.Cell(i, C).String()
 		info.DesignName = sheet.Cell(i, D).String()
-		info.DaBianChengJi = sheet.Cell(i, E).String()
-		info.ZhiDaoChengJi = sheet.Cell(i, F).String()
-		info.PingYueChengJi = sheet.Cell(i, G).String()
-		info.ZongHeChengJi = sheet.Cell(i, H).String()
-		info.DaBianWeiYuanHuiPingYu = sheet.Cell(i, I).String()
+		info.BaoGaoJiangJie = sheet.Cell(i, E).String()
+		info.DaBianQingKuang = sheet.Cell(i, F).String()
+		info.ChuangXin = sheet.Cell(i, G).String()
+		baogaoChengji, _ := sheet.Cell(i, E).Float()
+		dabianQingkuang, _ := sheet.Cell(i, F).Float()
+		chuangxin, _ := sheet.Cell(i, G).Float()
+		dabianChengji := baogaoChengji + dabianQingkuang + chuangxin
+		info.DaBianChengJi = fmt.Sprintf("%.1f", dabianChengji)
+		fmt.Sscanf(info.DaBianChengJi, "%f", &dabianChengji)
+		info.ZhiDaoChengJi = sheet.Cell(i, H).String()
+		info.PingYueChengJi = sheet.Cell(i, I).String()
+		zhidaoChengji, _ := sheet.Cell(i, H).Float()
+		pingyueChengji, _ := sheet.Cell(i, I).Float()
+		zongheChengji := 0.4*dabianChengji + 0.2*pingyueChengji + 0.4*zhidaoChengji
+		info.ZongHeChengJi = fmt.Sprintf("%.1f", zongheChengji)
+		info.DaBianWeiYuanHuiPingYu = sheet.Cell(i, J).String()
 		if len(info.DaBianWeiYuanHuiPingYu) < 5 {
 			info.DaBianWeiYuanHuiPingYu = `
 		该生毕业设计选题具有实际工程意义，设计质量较好，设计成果完整、具有一定的工程价值。

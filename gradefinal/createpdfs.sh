@@ -1,12 +1,12 @@
 #!/bin/sh
-# suffix=".tex"
-# if [ ! -d "pdfs" ]; then
-# 	mkdir pdfs
-# fi
-# 
-# ./gradefinal studentsinfo.xlsx
+suffix=".tex"
+if [ ! -d "pdfs" ]; then
+	mkdir pdfs
+fi
 
-# mv *.tex pdfs/
+./gradefinal studentsinfo.xlsx
+
+mv *.tex pdfs/
 cd pdfs
 
 dir=$(eval pwd)

@@ -62,12 +62,12 @@
 	毕业设计（论文）题目 & {{.DesignName}} \\
 	\hline
 	答辩成绩评定 &
-	\begin{tabular}{@{}p{3.5cm}|@{}p{4cm}|@{}p{3.8cm}@{}}
-		\makecell{报告、讲解\\(满分40分)} &  & \makecell{答辩成绩\\(百分制)} \\ 
+	\begin{tabular}{@{}p{3.5cm}|@{}p{4cm}<{\centering}|@{}p{3.8cm}@{}}
+		\makecell{报告、讲解\\(满分40分)} & {{.BaoGaoJiangJie}} & \makecell{答辩成绩\\(百分制)} \\ 
 		\hline
-		\makecell{答辩情况\\(满分50分)} &  & \multirowcell{2}{~{{.DaBianChengJi}}~} \\
+		\makecell{答辩情况\\(满分50分)} &  {{.DaBianQingKuang}} & \multirowcell{2}{~{{.DaBianChengJi}}~} \\
 		\cline{1-2}
-		\makecell{创新\\(满分10分)} &  \\
+		\makecell{创新\\(满分10分)} &  {{.ChuangXin}} \\
 	\end{tabular}\\
 	\hline
 	指导教师评定成绩 &  {{.ZhiDaoChengJi}}\\
