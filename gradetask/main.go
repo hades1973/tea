@@ -112,7 +112,7 @@ func main() {
 	names, class, prjs := readNamesClassProjs(os.Args[1])
 
 	// 根据模板生成tex文件
-	templ, err := template.ParseFiles("templ.tex")
+	templ, err := template.ParseFiles("templ.tex.tpl")
 	if err != nil {
 		log.Panic(err)
 	}
