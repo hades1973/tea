@@ -1,7 +1,6 @@
 package main
 
 import (
-	"database/sql"
 	"fmt"
 	"html/template"
 	"log"
@@ -66,11 +65,13 @@ func ProduceTestPaper(info *TestInfoForm) (qfileName, afileName string) {
 	tAnswer.Execute(afile, &info)
 
 	// 逐个生成题目
-	base := DBItemByName(info.DatabaseName)
-	fmt.Println(base.Path)
-	db, err := sql.Open("sqlite3", base.Path)
+	//base := DBConfigByName(info.DatabaseName)
+	//fmt.Println(base.Path)
+	//db, err := sql.Open("sqlite3", base.Path)
+	db, err := OpenDB(info.DatabaseName)
 	ErrQuit(err)
-	qtypes := []string{"填空题", "选择题", "判断题", "计算题", "问答题"}
+	qtypes := []string{"blank", "select", "judge", "caculate", "report"}
+	fmt.Errorf("%v\n", info.Questions)
 	for _, qtype := range qtypes {
 		item, ok := info.Questions[qtype]
 		if !ok {
@@ -93,6 +94,7 @@ func ProduceTestPaper(info *TestInfoForm) (qfileName, afileName string) {
 		for _, n := range item.Questions {
 			err := db.QueryRow(query, n).Scan(&question, &answer)
 			if err != nil {
+				fmt.Errorf("%v\n", err)
 				continue
 			}
 			fmt.Fprintf(qfile, "\\item{%s}", markdownToLatex(question))

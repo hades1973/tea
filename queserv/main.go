@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"html/template"
+	"log"
 	"net/http"
 	"os/exec"
 	"strings"
@@ -55,7 +56,7 @@ func main() {
 	// "/" => index.html
 	r.GET("/", func(c *gin.Context) {
 		c.HTML(http.StatusOK, "index.html", gin.H{
-			"DB": DBConfig().DataBaseItems})
+			"DB": theDBConfigs})
 	})
 
 	// "/login" => login.html
@@ -68,6 +69,7 @@ func main() {
 		pageData := QuestionsPageData{}
 		dbname := c.Param("dbname")
 		if FillTestPageDataFromDB(dbname, &pageData) == false {
+			log.Println("no find database ", dbname)
 			return
 		}
 		c.HTML(http.StatusOK, "testpaperinfo.html", gin.H{
@@ -83,6 +85,7 @@ func main() {
 		dbname := c.Param("dbname")
 		pageData := QuestionsPageData{}
 		if FillTestPageDataFromDB(dbname, &pageData) == false {
+			log.Printf("database %s can't find\n", dbname)
 			return
 		}
 
@@ -177,10 +180,8 @@ func main() {
 
 // FillTestPageDataFromDB 返回数据库内所有试题
 func FillTestPageDataFromDB(dbname string, pageData *QuestionsPageData) bool {
-	base := DBItemByName(dbname)
-
 	// open db for dbname
-	db, err := OpenDB(base.Path)
+	db, err := OpenDB(dbname)
 	if err != nil {
 		fmt.Println(err)
 		return false
